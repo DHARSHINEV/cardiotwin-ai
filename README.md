@@ -23,6 +23,25 @@
 
 ---
 
+## 🏆 Submission Summary — Digital Twin Challenge 2026 (Happiest Health)
+
+| Mandatory Requirement | Deliverable / Verified Link |
+| :--- | :--- |
+| **1. Project Title** | **CardioTwin AI** (Personalized Cardiovascular Digital Twin Decision Support Suite) |
+| **2. Problem Statement** | [Section 3: Reactive care vs. continuous trajectory awareness](#3-problem-statement) |
+| **3. Healthcare Use Case** | [Section 5: Early outpatient & RPM deterioration detection](#5-healthcare-use-case) |
+| **4. Technical Stack** | [Section 18: FastAPI, React 19, TypeScript, Vite, Tailwind, Docker](#18-technology-stack) |
+| **5. AI/ML Models & Frameworks** | [Section 10 & 15: Gradient Boosting, XGBoost, N=1 Baseline Drift Engine](#10-machine-learning-methodology) |
+| **6. Architecture Diagram (PDF)** | [docs/architecture.pdf](docs/architecture.pdf) • [Raw GitHub Download](https://raw.githubusercontent.com/DHARSHINEV/cardiotwin-ai/master/docs/architecture.pdf) |
+| **7. Presentation Deck (PDF)** | [docs/presentation.pdf](docs/presentation.pdf) • [Raw GitHub Download](https://raw.githubusercontent.com/DHARSHINEV/cardiotwin-ai/master/docs/presentation.pdf) |
+| **8. Open-Source License** | [Apache License 2.0](LICENSE) |
+| **9. Public GitHub Repository** | [https://github.com/DHARSHINEV/cardiotwin-ai](https://github.com/DHARSHINEV/cardiotwin-ai) |
+| **10. 15–20 Min YouTube Demo** | [Section 24: Unlisted YouTube Demo Video](#24-video-demonstration-1520-minute-unlisted-youtube-video) |
+| **11. Team Details** | [Section 30: Team Member Roster](#30-submission-metadata--team-details) |
+| **12. College / Incubator Info** | [Section 30: Institution & Incubator](#30-submission-metadata--team-details) |
+
+---
+
 ## 3. Problem Statement
 Cardiovascular disease remains the leading cause of premature mortality worldwide. Contemporary cardiovascular care is fundamentally **reactive**:
 - Patients with chronic hypertension, type-2 diabetes, and dyslipidemia are reviewed episodically (every 3 to 6 months).
@@ -261,7 +280,7 @@ In strict alignment with competition submission guidelines, we distinguish betwe
 
 ```bash
 # Clone the repository
-git clone https://github.com/cardiotwin-ai/cardiotwin-ai.git
+git clone https://github.com/DHARSHINEV/cardiotwin-ai.git
 cd cardiotwin-ai
 
 # Set up Python backend dependencies
@@ -324,8 +343,13 @@ The user interface adheres to clean, trustworthy healthcare informatics design:
 
 ---
 
-## 24. Video Demonstration Script
-A complete 20-minute scripted narrative for presenting Patient A-1042's clinical journey is documented in [docs/demo_script.md](docs/demo_script.md).
+## 24. Video Demonstration (15–20 Minute Unlisted YouTube Video)
+
+- **Video Title:** CardioTwin AI — End-to-End System Walkthrough & Clinical Demo
+- **Submission Requirement:** 15–20 minute unlisted video demonstrating end-to-end functionality, architecture, and live demo.
+- **Unlisted YouTube URL:** `[INSERT_YOUR_UNLISTED_YOUTUBE_URL_HERE]` *(e.g., `https://youtu.be/...`)*
+- **Demo Scenario Script:** Documented in [docs/demo_script.md](docs/demo_script.md)
+- **5-Minute Summary Flow:** Documented in [docs/five_minute_demo.md](docs/five_minute_demo.md)
 
 ---
 
@@ -362,10 +386,19 @@ Licensed under the **Apache License, Version 2.0**. See [LICENSE](LICENSE) for d
 
 ---
 
-## 30. Engineering Team
-**Digital Twin Challenge 2026 by Happiest Health**
-- Senior AI/ML Engineer
-- Digital Twin Architect
-- Healthcare Informatics Specialist
-- Full-Stack Engineer & UI/UX Designer
-- Clinical Data Scientist & Presentation Strategist
+## 30. Submission Metadata & Team Details
+
+### 🏢 College / Incubator Information
+- **College / University / Institute:** `[INSERT_COLLEGE_OR_INCUBATOR_NAME_HERE]`
+- **Department / Center:** `[INSERT_DEPARTMENT_OR_CENTER_HERE]`
+- **Location:** `[INSERT_CITY_STATE_HERE]`
+
+### 👥 Team Members
+| Team Member | Role / Specialization | Contact / Email | GitHub Profile |
+| :--- | :--- | :--- | :--- |
+| **Dharshine V** | Team Lead • Full-Stack & ML Systems | `[Insert Email]` | [@DHARSHINEV](https://github.com/DHARSHINEV) |
+| **[Team Member 2]** | Healthcare Informatics & Backend | `[Insert Email]` | `[GitHub Profile]` |
+| **[Team Member 3]** | Digital Twin Modeling & Data Science | `[Insert Email]` | `[GitHub Profile]` |
+| **[Team Member 4]** | UI/UX & Clinical Evaluation | `[Insert Email]` | `[GitHub Profile]` |
+
+*Note: Update the bracketed placeholders above with your exact team members and institution details before final submission.*
