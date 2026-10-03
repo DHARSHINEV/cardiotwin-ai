@@ -151,7 +151,7 @@ export function App() {
 
   const handleResetPatient = async () => {
     try {
-      await api.setDemoStage(1);
+      await api.resetDemo();
       setCurrentDemoStage(1);
       loadPatientData(selectedPatientId);
     } catch (err) {
@@ -280,17 +280,21 @@ export function App() {
 
                 <div className="text-right">
                   <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400 block mb-0.5">
-                    Active Alerts
+                    Alert Status
                   </span>
                   <div className="flex items-center justify-end gap-1.5">
                     <Bell className={`w-4 h-4 ${unacknowledgedAlerts.length > 0 ? 'text-rose-400 animate-bounce' : 'text-slate-500'}`} />
-                    <span className={`text-sm font-bold font-mono ${unacknowledgedAlerts.length > 0 ? 'text-rose-400' : 'text-slate-400'}`}>
-                      {unacknowledgedAlerts.length} Pending
+                    <span className={`text-sm font-bold font-mono ${unacknowledgedAlerts.length > 0 ? 'text-rose-400' : 'text-slate-300'}`}>
+                      {unacknowledgedAlerts.length > 0
+                        ? `${unacknowledgedAlerts.length} Pending Review`
+                        : alerts.length > 0
+                        ? `0 Active (${alerts.length} Historical)`
+                        : '0 Active'}
                     </span>
                   </div>
                   <button
                     onClick={() => setActiveTab('alerts')}
-                    className="text-[10px] text-sky-400 hover:text-sky-300 font-medium underline"
+                    className="text-[10px] text-sky-400 hover:text-sky-300 font-medium underline cursor-pointer"
                   >
                     View Alert Center
                   </button>
@@ -366,6 +370,7 @@ export function App() {
         {activeTab === 'whatif' && (
           <WhatIfSimulator
             patientId={selectedPatientId}
+            twinState={twinState}
           />
         )}
 
@@ -386,7 +391,7 @@ export function App() {
           />
         )}
 
-        {/* Tab 5: Clinician Alerts Center */}
+        {/* Tab 6: Clinician Alerts Center */}
         {activeTab === 'alerts' && (
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
@@ -395,7 +400,7 @@ export function App() {
                 <h2 className="text-base font-bold text-white tracking-tight">Clinician Alert Center</h2>
               </div>
               <span className="text-xs font-mono text-slate-400">
-                {unacknowledgedAlerts.length} Unacknowledged Alerts
+                {unacknowledgedAlerts.length} Pending Review • {alerts.length - unacknowledgedAlerts.length} Historical Records
               </span>
             </div>
 
@@ -422,6 +427,11 @@ export function App() {
                           al.severity === 'High' ? 'bg-rose-950 text-rose-300 border-rose-800' : 'bg-amber-950 text-amber-300 border-amber-800'
                         }`}>
                           {al.severity} Severity
+                        </span>
+                        <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold border ${
+                          al.acknowledged ? 'bg-slate-800 text-slate-400 border-slate-700' : 'bg-rose-950 text-rose-300 border-rose-700 animate-pulse'
+                        }`}>
+                          {al.acknowledged ? 'Historical Archive' : 'Pending Review'}
                         </span>
                         <h3 className="text-sm font-bold text-white">{al.title}</h3>
                       </div>

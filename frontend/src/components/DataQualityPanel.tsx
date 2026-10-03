@@ -65,7 +65,7 @@ export const DataQualityPanel: React.FC<DataQualityPanelProps> = ({ dataQuality 
 
       {/* Sensor Stream Integrity Matrix */}
       <div className="space-y-2 mt-2">
-        {sensors.map((s, idx) => (
+        {(sensors || []).map((s, idx) => (
           <div key={idx} className="bg-slate-950 p-2.5 rounded-lg border border-slate-800/80 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <Cpu className="w-3.5 h-3.5 text-slate-500" />
@@ -89,7 +89,7 @@ export const DataQualityPanel: React.FC<DataQualityPanelProps> = ({ dataQuality 
       </div>
 
       {/* Sensor Warnings */}
-      {warnings.length > 0 && (
+      {(warnings || []).length > 0 && (
         <div className={`border rounded-lg p-3 text-xs space-y-1 ${
           overall_quality_score < 70
             ? 'bg-rose-950/60 border-rose-800/80 text-rose-200 shadow-md shadow-rose-950/40'
@@ -99,7 +99,7 @@ export const DataQualityPanel: React.FC<DataQualityPanelProps> = ({ dataQuality 
             <AlertTriangle className={`w-3.5 h-3.5 ${overall_quality_score < 70 ? 'text-rose-400' : 'text-amber-300'}`} />
             <span>{overall_quality_score < 70 ? 'Telemetry Degraded — AI Confidence Suppressed' : 'Telemetry Warnings'}</span>
           </div>
-          {warnings.map((w, idx) => (
+          {(warnings || []).map((w, idx) => (
             <p key={idx} className="text-[11px] pl-5 leading-relaxed">• {w}</p>
           ))}
         </div>

@@ -13,6 +13,8 @@ export const ExplainabilityPanel: React.FC<ExplainabilityPanelProps> = ({
   driftScore,
   driftLevel
 }) => {
+  const safeContributors = contributors || [];
+
   return (
     <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg space-y-4">
       <div className="flex items-center justify-between pb-3 border-b border-slate-800">
@@ -34,10 +36,15 @@ export const ExplainabilityPanel: React.FC<ExplainabilityPanelProps> = ({
 
       {/* Feature Attribution List */}
       <div className="space-y-2.5 mt-2">
-        {contributors.map((contrib, idx) => {
-          const isRisk = contrib.direction === "increased_risk";
-          const maxImp = contributors[0]?.importance || 1.0;
-          const widthPct = Math.min(100, Math.max(10, (contrib.importance / maxImp) * 100));
+        {safeContributors.length === 0 ? (
+          <div className="bg-slate-950 p-4 rounded-lg border border-slate-800/80 text-xs text-slate-400 text-center font-mono">
+            All wearable telemetry is currently within personal baseline equilibrium. No acute adverse risk contributors detected.
+          </div>
+        ) : (
+          safeContributors.map((contrib, idx) => {
+            const isRisk = contrib.direction === "increased_risk";
+            const maxImp = safeContributors[0]?.importance || 1.0;
+            const widthPct = Math.min(100, Math.max(10, (contrib.importance / maxImp) * 100));
 
           return (
             <div key={idx} className="bg-slate-950 p-3 rounded-lg border border-slate-800/80">
@@ -76,7 +83,8 @@ export const ExplainabilityPanel: React.FC<ExplainabilityPanelProps> = ({
               </p>
             </div>
           );
-        })}
+        })
+      )}
       </div>
     </div>
   );

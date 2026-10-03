@@ -9,15 +9,19 @@ from backend.app.core.config import settings
 import json
 from datetime import datetime
 
+db_url = settings.DATABASE_URL
+if db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql://", 1)
+
 connect_args = {}
-if settings.DATABASE_URL.startswith("sqlite"):
+if db_url.startswith("sqlite"):
     connect_args = {"check_same_thread": False}
 
 def custom_json_serializer(obj):
     return json.dumps(obj, default=str)
 
 engine = create_engine(
-    settings.DATABASE_URL,
+    db_url,
     connect_args=connect_args,
     json_serializer=custom_json_serializer,
     echo=False

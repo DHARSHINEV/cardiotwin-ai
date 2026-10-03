@@ -7,6 +7,32 @@ interface PersonalBaselineCardProps {
   patientName: string;
 }
 
+function formatBaselineRange(key: string, lower: number, upper: number, unit: string): string {
+  if (lower == null || upper == null || isNaN(lower) || isNaN(upper)) return "Range unavailable";
+  if (key === 'steps') {
+    return `95% range: ${Math.round(lower).toLocaleString()}–${Math.round(upper).toLocaleString()} steps`;
+  }
+  if (key === 'stress_index') {
+    return `95% range: ${Math.round(lower)}–${Math.round(upper)}`;
+  }
+  if (key === 'sleep_duration') {
+    return `95% range: ${lower.toFixed(1)}–${upper.toFixed(1)} h`;
+  }
+  if (key === 'spo2') {
+    return `95% range: ${lower.toFixed(1)}–${upper.toFixed(1)}%`;
+  }
+  if (key === 'respiratory_rate') {
+    return `95% range: ${lower.toFixed(1)}–${upper.toFixed(1)} br/min`;
+  }
+  if (key === 'resting_hr') {
+    return `95% range: ${lower.toFixed(1)}–${upper.toFixed(1)} bpm`;
+  }
+  if (key === 'hrv') {
+    return `95% range: ${lower.toFixed(1)}–${upper.toFixed(1)} ms`;
+  }
+  return `95% range: ${lower}–${upper} ${unit}`;
+}
+
 export const PersonalBaselineCard: React.FC<PersonalBaselineCardProps> = ({ twinState, patientName }) => {
   const { baseline, deviations, current_state } = twinState;
 
@@ -91,7 +117,7 @@ export const PersonalBaselineCard: React.FC<PersonalBaselineCardProps> = ({ twin
           <div>
             <span className="font-semibold text-white">Digital Twin Principle: </span>
             <span>
-              "82 bpm may be acceptable for an arbitrary person, but for {patientName}, 82 bpm represents a significant <strong className="text-amber-300">+20.6% (+2.8 SD)</strong> deviation from their personal 68 bpm baseline."
+              "While 82 bpm is labeled normal (&lt;100 bpm) in population triage, for {patientName}, a surge to 82 bpm represents an abnormal <strong className="text-amber-300">+20.6% (+2.8 SD)</strong> departure from their personal 68 bpm baseline."
             </span>
           </div>
         </div>
@@ -100,8 +126,8 @@ export const PersonalBaselineCard: React.FC<PersonalBaselineCardProps> = ({ twin
       {/* Grid of Signals */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 mt-4">
         {signals.map((sig) => {
-          const bInfo = baseline[sig.key];
-          const devInfo = deviations[sig.key];
+          const bInfo = baseline[sig.key] || baseline[sig.key === 'resting_hr' ? 'resting_heart_rate' : ''];
+          const devInfo = deviations[sig.key] || deviations[sig.key === 'resting_hr' ? 'resting_heart_rate' : ''];
           if (!bInfo || !devInfo) return null;
 
           const IconComponent = sig.icon;
@@ -135,7 +161,9 @@ export const PersonalBaselineCard: React.FC<PersonalBaselineCardProps> = ({ twin
                   <span className="text-xs font-semibold text-slate-200">{sig.label}</span>
                 </div>
                 <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded border ${statusBadge}`}>
-                  {zScore > 0 ? `+${zScore} SD` : `${zScore} SD`}
+                  {zScore != null && !isNaN(zScore)
+                    ? (zScore > 0 ? `+${zScore.toFixed(1)} SD` : `${zScore.toFixed(1)} SD`)
+                    : "SD unavailable"}
                 </span>
               </div>
 
@@ -159,9 +187,8 @@ export const PersonalBaselineCard: React.FC<PersonalBaselineCardProps> = ({ twin
 
               {/* Visual Range Indicator Bar */}
               <div className="mt-3">
-                <div className="flex justify-between text-[10px] text-slate-500 font-mono mb-1">
-                  <span>95% Min: {sig.key === 'steps' ? Math.round(lower) : lower}</span>
-                  <span>95% Max: {sig.key === 'steps' ? Math.round(upper) : upper}</span>
+                <div className="flex justify-between items-center text-[10px] text-slate-400 font-mono mb-1">
+                  <span>{formatBaselineRange(sig.key, lower, upper, sig.unit)}</span>
                 </div>
                 <div className="h-2 w-full bg-slate-800 rounded-full relative overflow-hidden border border-slate-700">
                   {/* Personal Normal Zone */}

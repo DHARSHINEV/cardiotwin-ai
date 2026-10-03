@@ -29,9 +29,19 @@ class PersonalBaselineEngine:
 
         baseline = {}
         for key, conf in SIGNALS_CONFIG.items():
-            vals = [float(r[key]) for r in historical_readings if key in r and r[key] is not None]
+            vals = []
+            for r in historical_readings:
+                val = r.get(key)
+                if val is None and key == "resting_hr":
+                    val = r.get("resting_heart_rate")
+                if val is not None:
+                    try:
+                        vals.append(float(val))
+                    except (ValueError, TypeError):
+                        pass
+
             if len(vals) < 3:
-                vals = [70.0 if key == "resting_hr" else 50.0]
+                vals = [68.0 if key == "resting_hr" else 50.0]
             
             mean_val = float(np.mean(vals))
             std_val = float(np.std(vals)) if np.std(vals) > 0.01 else 1.0
@@ -75,16 +85,34 @@ class PersonalBaselineEngine:
         against the patient's individual baseline.
         """
         deviations = {}
-        for signal_key, current_val in current_state.items():
-            if signal_key not in baseline:
+        normalized_state = dict(current_state)
+        # Normalize resting HR aliases
+        if "resting_heart_rate" in normalized_state and "resting_hr" not in normalized_state:
+            normalized_state["resting_hr"] = normalized_state["resting_heart_rate"]
+        elif "resting_hr" in normalized_state and "resting_heart_rate" not in normalized_state:
+            normalized_state["resting_heart_rate"] = normalized_state["resting_hr"]
+
+        for signal_key, current_val in normalized_state.items():
+            b_key = signal_key
+            if b_key not in baseline and signal_key == "resting_heart_rate" and "resting_hr" in baseline:
+                b_key = "resting_hr"
+
+            if b_key not in baseline or current_val is None:
                 continue
             
-            b_info = baseline[signal_key]
+            b_info = baseline[b_key]
             mean_b = b_info["mean"]
-            std_b = b_info["std"] if b_info["std"] > 0.001 else 1.0
+            std_b = b_info.get("std", 1.0)
+            if std_b is None or std_b <= 0.001:
+                std_b = 1.0
             
-            pct_change = round(((current_val - mean_b) / mean_b) * 100.0, 1)
-            z_score = round((current_val - mean_b) / std_b, 2)
+            try:
+                curr_f = float(current_val)
+            except (ValueError, TypeError):
+                continue
+
+            pct_change = round(((curr_f - mean_b) / mean_b) * 100.0, 1)
+            z_score = round((curr_f - mean_b) / std_b, 2)
             
             # Clinical status determination
             abs_z = abs(z_score)
@@ -95,13 +123,22 @@ class PersonalBaselineEngine:
             else:
                 status = "critical"
 
-            deviations[signal_key] = {
-                "current_value": round(current_val, 1),
+            dev_payload = {
+                "current_value": round(curr_f, 1),
                 "baseline_mean": mean_b,
+                "baseline_std": round(std_b, 2),
+                "baseline_lower": b_info.get("lower_bound"),
+                "baseline_upper": b_info.get("upper_bound"),
                 "percentage_change": pct_change,
                 "z_score": z_score,
                 "unit": b_info.get("unit", ""),
                 "status": status,
                 "name": b_info.get("name", signal_key)
             }
+            deviations[signal_key] = dev_payload
+            if signal_key == "resting_hr":
+                deviations["resting_heart_rate"] = dev_payload
+            elif signal_key == "resting_heart_rate":
+                deviations["resting_hr"] = dev_payload
+
         return deviations

@@ -2,7 +2,9 @@
  * API Client for CardioTwin AI Backend.
  */
 
-const API_BASE = "http://localhost:8000/api";
+const rawBase = (import.meta.env.VITE_API_BASE as string) || (import.meta.env.VITE_API_URL as string) || "http://localhost:8000/api";
+const cleanBase = rawBase.replace(/\/$/, "");
+const API_BASE = cleanBase.endsWith("/api") ? cleanBase : `${cleanBase}/api`;
 
 export interface PatientSummary {
   id: string;
@@ -284,6 +286,11 @@ export const api = {
 
   async setDemoStage(stageNum: number): Promise<any> {
     const res = await fetch(`${API_BASE}/demo/set-stage/${stageNum}`, { method: "POST" });
+    return res.json();
+  },
+
+  async resetDemo(): Promise<any> {
+    const res = await fetch(`${API_BASE}/demo/reset`, { method: "POST" });
     return res.json();
   },
 

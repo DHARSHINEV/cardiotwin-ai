@@ -1,20 +1,26 @@
 import React, { useState } from 'react';
 import { Sliders, Play, RefreshCw, AlertCircle, TrendingDown, Sparkles, CheckCircle2 } from 'lucide-react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend } from 'recharts';
-import { WhatIfResult, api } from '../services/api';
+import { WhatIfResult, TwinState, api } from '../services/api';
 
 interface WhatIfSimulatorProps {
   patientId: string;
+  twinState?: TwinState | null;
   initialResult?: WhatIfResult | null;
 }
 
-export const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({ patientId, initialResult }) => {
+export const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({ patientId, twinState, initialResult }) => {
   const [sleepHours, setSleepHours] = useState<number>(7.2);
   const [activityLevel, setActivityLevel] = useState<string>('moderate');
   const [medAdherence, setMedAdherence] = useState<number>(95);
   const [stressReduction, setStressReduction] = useState<number>(40);
   const [loading, setLoading] = useState<boolean>(false);
   const [result, setResult] = useState<WhatIfResult | null>(initialResult || null);
+
+  const currentRisk24h = twinState?.risk_24h ?? 0.08;
+  const currentRisk6h = twinState?.risk_6h ?? 0.05;
+  const currentRisk72h = twinState?.risk_72h ?? 0.12;
+  const currentDrift = twinState?.twin_drift_score ?? 12.4;
 
   const handleSimulate = async () => {
     setLoading(true);
@@ -35,18 +41,30 @@ export const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({ patientId, ini
     }
   };
 
+  const defaultChartData = [
+    { name: 'Now', hours: '0h', baselineRisk: Math.round(currentRisk6h * 0.85 * 100), simulatedRisk: Math.round(currentRisk6h * 0.85 * 100), projectedDrift: Math.round(currentDrift) },
+    { name: '6h', hours: '6h', baselineRisk: Math.round(currentRisk6h * 100), simulatedRisk: Math.round(currentRisk6h * 100), projectedDrift: Math.round(currentDrift) },
+    { name: '24h', hours: '24h', baselineRisk: Math.round(currentRisk24h * 100), simulatedRisk: Math.round(currentRisk24h * 100), projectedDrift: Math.round(currentDrift) },
+    { name: '72h', hours: '72h', baselineRisk: Math.round(currentRisk72h * 100), simulatedRisk: Math.round(currentRisk72h * 100), projectedDrift: Math.round(currentDrift) }
+  ];
+
   const chartData = result?.trajectories.map((t) => ({
     name: t.horizon,
     hours: `${t.hours_from_now}h`,
     baselineRisk: Math.round(t.baseline_risk * 100),
     simulatedRisk: Math.round(t.simulated_risk * 100),
     projectedDrift: Math.round(t.projected_drift)
-  })) || [
-    { name: 'Now', hours: '0h', baselineRisk: 25, simulatedRisk: 25, projectedDrift: 45 },
-    { name: '6h', hours: '6h', baselineRisk: 32, simulatedRisk: 20, projectedDrift: 42 },
-    { name: '24h', hours: '24h', baselineRisk: 68, simulatedRisk: 28, projectedDrift: 32 },
-    { name: '72h', hours: '72h', baselineRisk: 78, simulatedRisk: 30, projectedDrift: 24 }
-  ];
+  })) || defaultChartData;
+
+  const current24hPct = result
+    ? Math.round((result.trajectories.find(t => t.horizon === '24h')?.baseline_risk ?? currentRisk24h) * 100)
+    : Math.round(currentRisk24h * 100);
+
+  const counterfactual24hPct = result
+    ? Math.round((result.trajectories.find(t => t.horizon === '24h')?.simulated_risk ?? currentRisk24h) * 100)
+    : current24hPct;
+
+  const changePts = current24hPct - counterfactual24hPct;
 
   return (
     <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg space-y-5">
@@ -69,9 +87,29 @@ export const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({ patientId, ini
           <div className="bg-amber-950/80 border border-amber-700/60 rounded-lg px-3 py-1.5 text-xs text-amber-200 flex items-center gap-2">
             <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
             <span className="font-semibold tracking-wide uppercase text-[10px]">
-              SIMULATED SCENARIO — NOT A CLINICAL PREDICTION
+              Modelled counterfactual — not a treatment recommendation.
             </span>
           </div>
+        </div>
+      </div>
+
+      {/* 24-Hour Counterfactual Impact Summary (Phase 11 & Consistency Requirements) */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3.5 bg-slate-950/80 rounded-xl border border-slate-800 font-mono text-center">
+        <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800/80">
+          <span className="text-[10px] text-slate-400 block uppercase">Current Modeled 24h Risk</span>
+          <span className="text-xl font-bold text-slate-200">{current24hPct}%</span>
+        </div>
+        <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800/80">
+          <span className="text-[10px] text-slate-400 block uppercase">Counterfactual Modeled 24h Risk</span>
+          <span className={`text-xl font-bold ${counterfactual24hPct < current24hPct ? 'text-emerald-400' : 'text-slate-200'}`}>
+            {counterfactual24hPct}%
+          </span>
+        </div>
+        <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800/80">
+          <span className="text-[10px] text-slate-400 block uppercase">Modeled Change</span>
+          <span className={`text-xl font-bold ${changePts > 0 ? 'text-emerald-400' : changePts < 0 ? 'text-rose-400' : 'text-slate-400'}`}>
+            {changePts > 0 ? `-${changePts} percentage points` : changePts < 0 ? `+${Math.abs(changePts)} percentage points` : '0 percentage points'}
+          </span>
         </div>
       </div>
 

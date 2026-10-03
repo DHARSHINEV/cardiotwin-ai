@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, Sparkles, ChevronRight, ChevronLeft, CheckCircle2, Play, AlertTriangle } from 'lucide-react';
+import React from 'react';
+import { X, Sparkles, ChevronRight, ChevronLeft, CheckCircle2, RotateCcw } from 'lucide-react';
 import { DemoStage, api } from '../services/api';
 
 interface DemoModeModalProps {
@@ -21,6 +21,7 @@ export const DemoModeModal: React.FC<DemoModeModalProps> = ({
 }) => {
   if (!isOpen) return null;
 
+  const totalStages = stages.length || 10;
   const currentStage = stages.find((s) => s.stage === currentStageNumber) || stages[0];
 
   const handleApplyStage = async (stageNum: number) => {
@@ -33,9 +34,19 @@ export const DemoModeModal: React.FC<DemoModeModalProps> = ({
     }
   };
 
+  const handleReset = async () => {
+    try {
+      await api.resetDemo();
+      onStageSelect(1);
+      onRefreshData();
+    } catch (err) {
+      console.error('Failed to reset demo', err);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-      <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-3xl w-full p-6 shadow-2xl space-y-6">
+      <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-4xl w-full p-6 shadow-2xl space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-800">
           <div className="flex items-center gap-3">
@@ -47,20 +58,30 @@ export const DemoModeModal: React.FC<DemoModeModalProps> = ({
                 CardioTwin AI — Guided Hackathon Demo Sequence
               </h2>
               <p className="text-xs text-slate-400">
-                Deterministic 8-stage presentation journey for Patient A-1042.
+                Deterministic {totalStages}-stage presentation journey for Patient A-1042.
               </p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-all"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleReset}
+              title="Reset Demo back to Stage 1"
+              className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/30 hover:border-amber-400 text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              Reset Demo
+            </button>
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-all"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
-        {/* Stage Progress Bar */}
-        <div className="grid grid-cols-4 sm:grid-cols-8 gap-1.5">
+        {/* Stage Progress Bar (10 Stages) */}
+        <div className="grid grid-cols-5 sm:grid-cols-10 gap-1.5">
           {stages.map((st) => {
             const isActive = st.stage === currentStageNumber;
             const isPassed = st.stage < currentStageNumber;
@@ -70,10 +91,10 @@ export const DemoModeModal: React.FC<DemoModeModalProps> = ({
                 onClick={() => handleApplyStage(st.stage)}
                 className={`p-2 rounded-lg text-center transition-all border ${
                   isActive
-                    ? 'bg-sky-600 border-sky-400 text-white font-bold shadow-lg shadow-sky-600/30'
+                    ? 'bg-sky-600 border-sky-400 text-white font-bold shadow-lg shadow-sky-600/30 ring-2 ring-sky-400/50'
                     : isPassed
-                    ? 'bg-slate-800 border-slate-700 text-slate-300'
-                    : 'bg-slate-950 border-slate-800 text-slate-500 hover:border-slate-700'
+                    ? 'bg-slate-800 border-slate-700 text-slate-300 hover:border-slate-500'
+                    : 'bg-slate-950 border-slate-800 text-slate-500 hover:border-slate-700 hover:text-slate-300'
                 }`}
               >
                 <div className="text-[10px] font-mono">Stage</div>
@@ -89,7 +110,7 @@ export const DemoModeModal: React.FC<DemoModeModalProps> = ({
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
                 <span className="text-xs font-mono font-bold text-sky-400 uppercase tracking-wider">
-                  Stage {currentStage.stage} of 8
+                  Stage {currentStage.stage} of {totalStages}
                 </span>
                 <h3 className="text-base font-bold text-white mt-0.5">{currentStage.title}</h3>
               </div>
@@ -128,13 +149,21 @@ export const DemoModeModal: React.FC<DemoModeModalProps> = ({
             <ChevronLeft className="w-4 h-4" /> Previous Stage
           </button>
 
-          <span className="text-xs text-slate-400 font-mono">
-            {currentStageNumber} / 8 Completed
-          </span>
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-slate-400 font-mono">
+              Stage {currentStageNumber} of {totalStages}
+            </span>
+            <button
+              onClick={handleReset}
+              className="text-xs text-amber-400 hover:text-amber-300 underline font-mono flex items-center gap-1"
+            >
+              <RotateCcw className="w-3 h-3" /> Reset to Baseline
+            </button>
+          </div>
 
           <button
-            onClick={() => handleApplyStage(Math.min(8, currentStageNumber + 1))}
-            disabled={currentStageNumber >= 8}
+            onClick={() => handleApplyStage(Math.min(totalStages, currentStageNumber + 1))}
+            disabled={currentStageNumber >= totalStages}
             className="px-5 py-2 rounded-lg text-xs font-semibold bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white flex items-center gap-1.5 disabled:opacity-30 cursor-pointer shadow-md shadow-sky-600/20"
           >
             Next Stage <ChevronRight className="w-4 h-4" />

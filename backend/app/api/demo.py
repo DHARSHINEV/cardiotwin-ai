@@ -28,7 +28,7 @@ router = APIRouter(prefix="/demo", tags=["Demo Mode"])
 DEMO_STAGES = [
     {
         "stage": 1,
-        "title": "Stable Baseline",
+        "title": "Quiescent Personal Baseline",
         "description": "Patient A-1042 in stable quiescent state. Wearables closely track personal baseline values.",
         "telemetry": {"resting_hr": 68.0, "hrv": 52.0, "sleep_duration": 7.1, "steps": 6200, "spo2": 97.0, "respiratory_rate": 14.5, "stress_index": 28.0},
         "drift_score": 12.4,
@@ -39,7 +39,7 @@ DEMO_STAGES = [
     },
     {
         "stage": 2,
-        "title": "Early Autonomic Deviation",
+        "title": "Early Nocturnal Deviation",
         "description": "Subtle nocturnal elevation in resting HR (+4 bpm) and modest HRV attenuation (-4 ms).",
         "telemetry": {"resting_hr": 72.0, "hrv": 48.0, "sleep_duration": 6.8, "steps": 5100, "spo2": 97.0, "respiratory_rate": 15.0, "stress_index": 35.0},
         "drift_score": 26.8,
@@ -50,7 +50,7 @@ DEMO_STAGES = [
     },
     {
         "stage": 3,
-        "title": "Resting HR Elevation",
+        "title": "Progressive Heart Rate Elevation",
         "description": "Resting HR increases to 75 bpm (+10.3%), sympathetic activation detected.",
         "telemetry": {"resting_hr": 75.0, "hrv": 45.0, "sleep_duration": 6.5, "steps": 4600, "spo2": 96.8, "respiratory_rate": 15.4, "stress_index": 42.0},
         "drift_score": 38.2,
@@ -61,7 +61,7 @@ DEMO_STAGES = [
     },
     {
         "stage": 4,
-        "title": "Vagal HRV Decline",
+        "title": "Progressive HRV Decline",
         "description": "HRV drops to 39 ms (-25.0%), indicating progressive parasympathetic withdrawal.",
         "telemetry": {"resting_hr": 78.0, "hrv": 39.0, "sleep_duration": 6.0, "steps": 3900, "spo2": 96.5, "respiratory_rate": 16.0, "stress_index": 52.0},
         "drift_score": 48.9,
@@ -72,7 +72,7 @@ DEMO_STAGES = [
     },
     {
         "stage": 5,
-        "title": "Sleep & Activity Deterioration",
+        "title": "Sleep Deficit & Activity Slump",
         "description": "Sleep duration drops to 5.4h (1.7h deficit), daily steps slump by 55% to 2,800 steps.",
         "telemetry": {"resting_hr": 80.0, "hrv": 36.0, "sleep_duration": 5.4, "steps": 2800, "spo2": 96.0, "respiratory_rate": 16.5, "stress_index": 64.0},
         "drift_score": 62.4,
@@ -83,7 +83,7 @@ DEMO_STAGES = [
     },
     {
         "stage": 6,
-        "title": "Twin Drift Surge",
+        "title": "Twin Drift Threshold Crossing",
         "description": "Resting HR reaches 82 bpm (+20.6%), HRV at 34 ms (-34.6%), SpO2 drifts to 95%.",
         "telemetry": {"resting_hr": 82.0, "hrv": 34.0, "sleep_duration": 5.4, "steps": 2800, "spo2": 95.0, "respiratory_rate": 17.5, "stress_index": 72.0},
         "drift_score": 79.6,
@@ -94,47 +94,47 @@ DEMO_STAGES = [
     },
     {
         "stage": 7,
-        "title": "Risk Alert Dispatched",
+        "title": "Multi-Horizon Risk Alert",
         "description": "Automated clinical alert triggered: High physiological deterioration drift with 24h risk crossing 70%.",
         "telemetry": {"resting_hr": 82.0, "hrv": 34.0, "sleep_duration": 5.4, "steps": 2800, "spo2": 95.0, "respiratory_rate": 18.0, "stress_index": 74.0},
         "drift_score": 81.1,
         "drift_level": "High",
         "risk_24h": 0.71,
         "data_quality": 95.0,
-        "key_event": "Explainable alert dispatched with exact feature weights."
+        "key_event": "Multi-horizon clinical alert dispatched: 6h (46%), 24h (71%), 72h (92%)."
     },
     {
         "stage": 8,
-        "title": "Explainability & What-If Simulation",
-        "description": "Clinician reviews SHAP-style weights and runs counterfactual simulation (sleep to 7.2h, med adherence to 95%).",
+        "title": "Explainability",
+        "description": "Clinician reviews SHAP-style weights and personal baseline deviations driving the risk alert.",
         "telemetry": {"resting_hr": 82.0, "hrv": 34.0, "sleep_duration": 5.4, "steps": 2800, "spo2": 95.0, "respiratory_rate": 18.0, "stress_index": 74.0},
         "drift_score": 81.1,
         "drift_level": "High",
         "risk_24h": 0.71,
         "data_quality": 95.0,
-        "key_event": "What-If engine projects risk decreasing from 71% to 28%."
+        "key_event": "Explainability drivers reveal RHR deviation (+20.6%), HRV loss (-34.6%), and sleep deficit."
     },
     {
         "stage": 9,
-        "title": "Failure Case Demo: Sensor Artifact",
-        "description": "PPG sensor experiences motion artifact / loose wrist fit. Data Quality drops to 45%. System refuses to issue false alarm and widens uncertainty bounds.",
+        "title": "What-If Counterfactual Recovery",
+        "description": "Clinician simulates targeted interventions: restoring sleep to 7.2h and medication adherence to 95% projects twin recovery.",
+        "telemetry": {"resting_hr": 70.0, "hrv": 50.0, "sleep_duration": 7.2, "steps": 5800, "spo2": 97.0, "respiratory_rate": 14.8, "stress_index": 32.0},
+        "drift_score": 18.5,
+        "drift_level": "Normal",
+        "risk_24h": 0.11,
+        "data_quality": 97.0,
+        "key_event": "What-If intervention simulation shows twin stabilization: 24h risk drops from 71% to 11%."
+    },
+    {
+        "stage": 10,
+        "title": "Sensor Failure / Artifact",
+        "description": "PPG sensor experiences motion artifact / loose wrist fit. Signal quality drops to 45%. System refuses to issue false alarms and widens uncertainty bounds.",
         "telemetry": {"resting_hr": 210.0, "hrv": 4.0, "sleep_duration": 7.1, "steps": 0, "spo2": 82.0, "respiratory_rate": 14.5, "stress_index": 80.0},
         "drift_score": 45.0,
         "drift_level": "Watch",
         "risk_24h": 0.25,
         "data_quality": 45.0,
         "key_event": "Data Quality Engine flags sensor artifact. AI warns clinician: 'Prediction confidence reduced because telemetry quality is insufficient.'"
-    },
-    {
-        "stage": 10,
-        "title": "Recovery & Stabilization",
-        "description": "Patient adheres to clinician guidance: sleep restored, medications taken, physiology stabilizes back toward baseline.",
-        "telemetry": {"resting_hr": 70.0, "hrv": 50.0, "sleep_duration": 7.2, "steps": 5800, "spo2": 97.0, "respiratory_rate": 14.8, "stress_index": 32.0},
-        "drift_score": 18.5,
-        "drift_level": "Normal",
-        "risk_24h": 0.11,
-        "data_quality": 97.0,
-        "key_event": "Twin Drift returns to Normal equilibrium (18.5). Successful proactive prevention."
     }
 ]
 
@@ -211,12 +211,23 @@ def set_demo_stage(stage_num: int, db: Session = Depends(get_db)):
     )
     db.add(twin_state)
 
-    # Stage 7 generates alert
-    if stage_num in [6, 7]:
-        existing_alert = db.query(Alert).filter(Alert.patient_id == p_id, Alert.severity == "High").first()
+    # Alerts lifecycle in demo sequence:
+    # Alerts lifecycle in demo sequence:
+    if stage_num in [1, 9, 10]:
+        # Stable baseline, recovered twin, or sensor artifact: archive active deterioration alerts
+        pending_alerts = db.query(Alert).filter(Alert.patient_id == p_id, Alert.acknowledged == False).all()
+        archive_reason = "Historical Baseline Archive" if stage_num == 1 else ("Intervention Recovery Archive" if stage_num == 9 else "Artifact Suppressed Archive")
+        for a in pending_alerts:
+            a.acknowledged = True
+            a.acknowledged_by = archive_reason
+            a.acknowledged_at = now_t
+
+    # Stage 6, 7, and 8 trigger active clinical alerts
+    if stage_num in [6, 7, 8]:
+        existing_alert = db.query(Alert).filter(Alert.patient_id == p_id, Alert.severity == "High", Alert.acknowledged == False).first()
         if not existing_alert:
             db.add(Alert(
-                id="ALT-DEMO-001",
+                id=f"ALT-DEMO-{int(now_t.timestamp())}",
                 patient_id=p_id,
                 timestamp=now_t,
                 severity="High",
@@ -240,5 +251,13 @@ def set_demo_stage(stage_num: int, db: Session = Depends(get_db)):
 
 @router.post("/reset")
 def reset_demo(db: Session = Depends(get_db)):
-    """Resets Patient A-1042 back to Stage 1 (Stable Baseline)."""
+    """Resets Patient A-1042 back to Stage 1 (Stable Baseline) and archives stale alerts."""
+    p_id = "PAT-A-1042"
+    now_t = datetime.now(timezone.utc)
+    stale_alerts = db.query(Alert).filter(Alert.patient_id == p_id, Alert.acknowledged == False).all()
+    for a in stale_alerts:
+        a.acknowledged = True
+        a.acknowledged_by = "Historical Demo Reset"
+        a.acknowledged_at = now_t
+    db.commit()
     return set_demo_stage(1, db=db)

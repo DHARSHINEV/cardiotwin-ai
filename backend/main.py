@@ -39,11 +39,22 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Enable CORS for frontend applications (Vite, React, Next.js, local)
+import os
+
+# Enable CORS for frontend applications (Vite, Vercel, localhost, Render)
+cors_origins_env = os.environ.get("CORS_ORIGINS", "")
+if cors_origins_env:
+    allowed_origins = [o.strip() for o in cors_origins_env.split(",") if o.strip()]
+    allow_creds = True
+else:
+    allowed_origins = ["*"]
+    allow_creds = False
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=allowed_origins,
+    allow_origin_regex=r"https://.*\.vercel\.app",
+    allow_credentials=allow_creds,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -61,9 +72,11 @@ def root_endpoint():
         "tagline": settings.TAGLINE,
         "version": settings.VERSION,
         "docs_url": "/docs",
+        "health_url": "/health",
         "api_v1": settings.API_V1_STR,
         "safety_disclaimer": "CardioTwin AI is a research proof-of-concept using synthetic data. It is not a medical device and does not diagnose, treat, or replace clinical judgment."
     }
 
 if __name__ == "__main__":
-    uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, reload=True)
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("backend.main:app", host="0.0.0.0", port=port, reload=False)
