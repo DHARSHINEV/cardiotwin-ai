@@ -1,0 +1,34 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY backend/ /app/backend/
+COPY ml/ /app/ml/
+COPY data/ /app/data/
+COPY scripts/ /app/scripts/
+COPY models/ /app/models/
+COPY docs/ /app/docs/
+
+RUN pip install --no-cache-dir \
+    fastapi \
+    uvicorn \
+    pydantic \
+    pydantic-settings \
+    sqlalchemy \
+    scikit-learn \
+    xgboost \
+    pandas \
+    numpy \
+    scipy \
+    joblib \
+    reportlab \
+    httpx
+
+EXPOSE 8000
+
+CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]

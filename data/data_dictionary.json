@@ -1,0 +1,79 @@
+{
+  "dataset_name": "CardioTwin AI Synthetic Cardiovascular Cohort",
+  "version": "1.0.0",
+  "description": "Synthetic multi-modal cohort combining clinical EHR and longitudinal wearable telemetry.",
+  "compliance": "Zero Real-Patient Data. Purely synthetic mathematical simulation.",
+  "variables": {
+    "patient_id": {
+      "type": "string",
+      "description": "Unique synthetic patient identifier"
+    },
+    "age": {
+      "type": "integer",
+      "unit": "years",
+      "range": "35-85"
+    },
+    "sex": {
+      "type": "categorical",
+      "values": [
+        "Male",
+        "Female"
+      ]
+    },
+    "bmi": {
+      "type": "float",
+      "unit": "kg/m^2",
+      "range": "18.5-42.0"
+    },
+    "systolic_bp": {
+      "type": "float",
+      "unit": "mmHg",
+      "description": "Resting seated blood pressure"
+    },
+    "diastolic_bp": {
+      "type": "float",
+      "unit": "mmHg",
+      "description": "Resting diastolic blood pressure"
+    },
+    "hba1c": {
+      "type": "float",
+      "unit": "%",
+      "description": "Glycated hemoglobin"
+    },
+    "ldl": {
+      "type": "float",
+      "unit": "mg/dL",
+      "description": "Low-density lipoprotein cholesterol"
+    },
+    "resting_heart_rate": {
+      "type": "float",
+      "unit": "bpm",
+      "description": "Wearable nocturnal/quiescent resting HR"
+    },
+    "hrv": {
+      "type": "float",
+      "unit": "ms",
+      "description": "Root Mean Square of Successive Differences (RMSSD)"
+    },
+    "sleep_duration": {
+      "type": "float",
+      "unit": "hours",
+      "description": "Total nocturnal sleep duration"
+    },
+    "steps": {
+      "type": "integer",
+      "unit": "steps/day",
+      "description": "Daily ambulatory step count"
+    },
+    "spo2": {
+      "type": "float",
+      "unit": "%",
+      "description": "Peripheral capillary oxygen saturation"
+    },
+    "twin_drift_score": {
+      "type": "float",
+      "range": "0-100",
+      "description": "Multivariate distance from personal baseline"
+    }
+  }
+}

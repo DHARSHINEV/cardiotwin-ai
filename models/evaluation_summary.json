@@ -1,0 +1,149 @@
+{
+  "models": [
+    {
+      "model_name": "Model A (EHR-only)",
+      "model_type": "EHR-only",
+      "auroc": 0.579,
+      "auprc": 0.324,
+      "precision": 0.222,
+      "recall": 0.229,
+      "f1": 0.225,
+      "brier_score": 0.196,
+      "false_alert_rate_per_patient_week": 1.7,
+      "median_lead_time_hours": 2.1
+    },
+    {
+      "model_name": "Model B (Wearable-only)",
+      "model_type": "Wearable-only",
+      "auroc": 0.708,
+      "auprc": 0.521,
+      "precision": 0.442,
+      "recall": 0.543,
+      "f1": 0.487,
+      "brier_score": 0.165,
+      "false_alert_rate_per_patient_week": 1.46,
+      "median_lead_time_hours": 7.2
+    },
+    {
+      "model_name": "Model C (EHR + Wearable Digital Twin)",
+      "model_type": "Fusion Twin",
+      "auroc": 0.744,
+      "auprc": 0.58,
+      "precision": 0.568,
+      "recall": 0.6,
+      "f1": 0.583,
+      "brier_score": 0.142,
+      "false_alert_rate_per_patient_week": 0.97,
+      "median_lead_time_hours": 14.5
+    }
+  ],
+  "stress_test": [
+    {
+      "missing_data_rate": 0.0,
+      "auroc": 0.744,
+      "f1": 0.583,
+      "performance_drop_percentage": 0.0
+    },
+    {
+      "missing_data_rate": 0.1,
+      "auroc": 0.735,
+      "f1": 0.583,
+      "performance_drop_percentage": 1.2
+    },
+    {
+      "missing_data_rate": 0.25,
+      "auroc": 0.758,
+      "f1": 0.563,
+      "performance_drop_percentage": 0.0
+    },
+    {
+      "missing_data_rate": 0.5,
+      "auroc": 0.754,
+      "f1": 0.571,
+      "performance_drop_percentage": 0.0
+    }
+  ],
+  "calibration_curve": [
+    {
+      "mean_predicted_value": 0.059,
+      "fraction_of_positives": 0.126
+    },
+    {
+      "mean_predicted_value": 0.18,
+      "fraction_of_positives": 0.091
+    },
+    {
+      "mean_predicted_value": 0.309,
+      "fraction_of_positives": 0.4
+    },
+    {
+      "mean_predicted_value": 0.463,
+      "fraction_of_positives": 0.143
+    },
+    {
+      "mean_predicted_value": 0.542,
+      "fraction_of_positives": 0.5
+    },
+    {
+      "mean_predicted_value": 0.671,
+      "fraction_of_positives": 0.429
+    },
+    {
+      "mean_predicted_value": 0.813,
+      "fraction_of_positives": 0.9
+    },
+    {
+      "mean_predicted_value": 0.936,
+      "fraction_of_positives": 0.667
+    }
+  ],
+  "confusion_matrix": {
+    "true_negative": 99,
+    "false_positive": 16,
+    "false_negative": 14,
+    "true_positive": 21
+  },
+  "feature_importances": [
+    {
+      "feature": "hrv_z",
+      "importance": 0.1742
+    },
+    {
+      "feature": "twin_drift_score",
+      "importance": 0.1044
+    },
+    {
+      "feature": "hba1c",
+      "importance": 0.0689
+    },
+    {
+      "feature": "age",
+      "importance": 0.0626
+    },
+    {
+      "feature": "sbp",
+      "importance": 0.0612
+    },
+    {
+      "feature": "steps_z",
+      "importance": 0.0569
+    },
+    {
+      "feature": "ldl",
+      "importance": 0.0501
+    },
+    {
+      "feature": "sleep_z",
+      "importance": 0.049
+    },
+    {
+      "feature": "prev_cv",
+      "importance": 0.0487
+    },
+    {
+      "feature": "bmi",
+      "importance": 0.0473
+    }
+  ],
+  "disclaimer": "Synthetic-data evaluation. Conducted via patient-stratified non-overlapping temporal test split."
+}
